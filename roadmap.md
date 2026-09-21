@@ -1,0 +1,3 @@
+- [x] Add a browsable Topics page with popular concepts and explanations
+- [x] Link the home page to Topics and make topic selection useful
+- [x] Verify Explain It uses the real AI service and returns explanations
