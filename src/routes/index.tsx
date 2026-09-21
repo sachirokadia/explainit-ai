@@ -1,5 +1,5 @@
 import { useServerFn } from "@tanstack/react-start";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowUpRight,
   Baby,
@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import type { LucideIcon } from "lucide-react";
+import { z } from "zod";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { explainTopic, type Explanation } from "@/lib/explain.functions";
 
 export const Route = createFileRoute("/")({
+  validateSearch: z.object({ topic: z.string().optional() }),
   head: () => ({
     meta: [
       { title: "ExplainIt AI — Understand Anything. Instantly." },
@@ -63,7 +65,8 @@ const cards: Array<{
 
 function Index() {
   const callExplain = useServerFn(explainTopic);
-  const [topic, setTopic] = useState("");
+  const search = Route.useSearch();
+  const [topic, setTopic] = useState(search.topic ?? "");
   const [results, setResults] = useState<Explanation | null>(null);
   const [loading, setLoading] = useState(false);
   const [simplifying, setSimplifying] = useState(false);
@@ -124,16 +127,21 @@ function Index() {
       <section className="explainit-hero relative border-b border-border/70">
         <div className="mx-auto max-w-6xl px-5 pb-20 pt-6 sm:px-8 sm:pb-28 sm:pt-8 lg:px-10">
           <nav className="flex items-center justify-between" aria-label="Main navigation">
-            <a className="explainit-wordmark inline-flex items-center gap-2 text-sm font-bold text-foreground" href="/">
+             <Link className="explainit-wordmark inline-flex items-center gap-2 text-sm font-bold text-foreground" to="/">
               <span className="grid size-8 place-items-center rounded-lg bg-foreground text-background">
                 <Sparkles className="size-4" aria-hidden="true" />
               </span>
               ExplainIt<span className="text-coral">.</span>
-            </a>
-            <Badge variant="outline" className="border-border bg-background/70 px-3 py-1 font-medium text-muted-foreground">
-              <span className="mr-2 size-1.5 rounded-full bg-mint" aria-hidden="true" />
-              Learn at your level
-            </Badge>
+             </Link>
+             <div className="flex items-center gap-2">
+               <Button asChild variant="ghost" className="rounded-full text-muted-foreground hover:bg-background/70 hover:text-foreground">
+                 <Link to="/topics">Browse topics</Link>
+               </Button>
+               <Badge variant="outline" className="hidden border-border bg-background/70 px-3 py-1 font-medium text-muted-foreground sm:inline-flex">
+                 <span className="mr-2 size-1.5 rounded-full bg-mint" aria-hidden="true" />
+                 Learn at your level
+               </Badge>
+             </div>
           </nav>
 
           <div className="mx-auto max-w-4xl pt-20 text-center sm:pt-28">
